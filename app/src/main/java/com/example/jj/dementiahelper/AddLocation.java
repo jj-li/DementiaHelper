@@ -93,6 +93,17 @@ public class AddLocation extends AppCompatActivity
                     data = new String[prev.length+1];
                     for (int i = 0; i < prev.length; i++) {
                         data[i] = prev[i];
+                        String[] temp = prev[i].split(",");
+                        Log.d("Name ", temp[0] + " vs " + name.getText());
+                        String currName = name.getText().toString();
+                        if (currName.equals(temp[0])) {
+                            Toast.makeText(getApplicationContext(), "Location name already exists.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        if (currentLatitude == Double.parseDouble(temp[1]) && currentLongitude == Double.parseDouble(temp[2])) {
+                            Toast.makeText(getApplicationContext(), "Location address already exists.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
                     }
                     data[prev.length] = currentLocation;
                 }
