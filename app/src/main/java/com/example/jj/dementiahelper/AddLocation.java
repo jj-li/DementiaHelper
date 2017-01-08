@@ -112,33 +112,12 @@ public class AddLocation extends AppCompatActivity
                     data[0] = currentLocation;
                 }
                 saveFile("savedFile.txt", data);
-                /*res = loadFile("savedFile.txt");
-                if (res.equals("")) {
-                    addr.setText("Nothing");
-                }
-                else
-                    addr.setText(res);*/
                 finish();
                 startActivity(new Intent(getApplicationContext(),Locations.class));
             }
 
             public void saveFile(String file, String[] data) {
-                /*FileOutputStream outputStream;
-                try {
-                    outputStream = openFileOutput(file, Context.MODE_PRIVATE);
-                    for (int i = 0; i < data.length; i++) {
-                        //Log.d("Writing: ", data[i]);
-                        outputStream.write(data[i].getBytes());
-                        if (i < data.length - 1) {
-                            //Log.d("Writing: ", "New line");
-                            outputStream.write("\n".getBytes());
-                        }
-                    }
-                    outputStream.close();
-                    Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
+
                 Context context = getApplicationContext();
                 try {
                     FileOutputStream fos = context.openFileOutput(file, Context.MODE_PRIVATE);
@@ -156,20 +135,6 @@ public class AddLocation extends AppCompatActivity
             }
 
             public String loadFile(String file) {
-                /*String data = "";
-                FileInputStream inputStream;
-                try {
-                    inputStream = openFileInput(file);
-                    //File iF = new File(file);
-                    //int length = (int) iF.length();
-                    byte[] bytes = new byte[4096];
-                    inputStream.read(bytes);
-                    data = new String(bytes);
-                    inputStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return data;*/
                 Context context = getApplicationContext();
                 String data = "";
                 try {
@@ -218,10 +183,6 @@ public class AddLocation extends AppCompatActivity
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
-//        mLocationRequest = LocationRequest.create()
-//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-//                .setInterval(10000)
-//                .setFastestInterval(5000);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
@@ -235,25 +196,6 @@ public class AddLocation extends AppCompatActivity
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_location, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -358,9 +300,6 @@ public class AddLocation extends AppCompatActivity
 
             Double latitude = location.getLatitude();
             Double longitude = location.getLongitude();
-//        String latLongString = Double.toString(latitude) + " ";
-//        latLongString += Double.toString(longitude);
-//        ((EditText) findViewById(R.id.zipField)).setText(latLongString);
 
             if (currentLatitude != latitude || currentLongitude != longitude) {
                 currentLatitude = latitude;
