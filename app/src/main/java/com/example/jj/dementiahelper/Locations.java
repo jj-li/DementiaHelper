@@ -1,16 +1,23 @@
 package com.example.jj.dementiahelper;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Locations extends AppCompatActivity {
@@ -20,26 +27,55 @@ public class Locations extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_locations);
         String res = loadFile("savedFile.txt");
-        String[] info = res.split("\n");
         LinearLayout layout = (LinearLayout) findViewById(R.id.myList);
-        for (String s : info) {
-            final Button rowButton = new Button(this);
+        if (res.equals("")) {
+            final TextView rowText = new TextView(this);
 
             //Set name of the button
-            rowButton.setText(s);
+            rowText.setText("No Locations. \nClick the plus button to add a location.");
+            rowText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 100);
 
             DisplayMetrics displaymetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             int width = displaymetrics.widthPixels;
             int height = displaymetrics.heightPixels;
-            rowButton.setWidth(width);
-            rowButton.setHeight(height/10);
+            rowText.setWidth(width);
+            rowText.setHeight(height);
 
             //Add button to the linear layout
-            layout.addView(rowButton);
+            layout.addView(rowText);
+        }
+        else {
+            String[] info = res.split("\n");
 
-            //save reference to the button
-            buttons.add(rowButton);
+            for (String s : info) {
+                if (s.equals("")) {
+                    continue;
+                }
+                final Button rowButton = new Button(this);
+                String[] locationInfo = s.split(",");
+                //Set name of the button
+                rowButton.setText(locationInfo[0]);
+                rowButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        //Pass locationInfo over
+                        //Go to new activity page
+                    }
+                });
+
+                DisplayMetrics displaymetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+                int width = displaymetrics.widthPixels;
+                int height = displaymetrics.heightPixels;
+                rowButton.setWidth(width);
+                rowButton.setHeight(height / 10);
+
+                //Add button to the linear layout
+                layout.addView(rowButton);
+
+                //save reference to the button
+                buttons.add(rowButton);
+            }
         }
 
         ImageButton addNewLocation = (ImageButton) findViewById(R.id.addLocation);
@@ -54,16 +90,27 @@ public class Locations extends AppCompatActivity {
         });
     }
 
+    protected void onStart(Bundle savedInstanceState) {
+        onCreate(savedInstanceState);
+    }
+
     public String loadFile(String file) {
+        Context context = getApplicationContext();
         String data = "";
-        FileInputStream inputStream;
         try {
-            inputStream = openFileInput(file);
-            byte[] bytes = new byte[4096];
-            inputStream.read(bytes);
-            data = new String(bytes);
-            inputStream.close();
-        } catch (Exception e) {
+            FileInputStream fin = context.openFileInput(file);
+            if (fin != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(fin);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String line;
+                while (( line = bufferedReader.readLine() ) != null) {
+                    data += line + "\n";
+                }
+                fin.close();
+            }
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return data;
