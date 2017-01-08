@@ -38,7 +38,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,12 +45,8 @@ import java.util.List;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.INTERNET;
-=======
 import java.io.InputStreamReader;
 import java.util.List;
-
-import static android.R.attr.lines;
->>>>>>> 52dfb8435866588cf7929ab81f8b4a85d4939c27
 
 public class AddLocation extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
@@ -340,9 +335,6 @@ public class AddLocation extends AppCompatActivity
             return true;
         }
 
-    }
-<<<<<<< HEAD
-
     private void checkAndRequestPermissions() {
         int coarsePermission = ContextCompat.checkSelfPermission(this,ACCESS_COARSE_LOCATION);
         int finePermission = ContextCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION);
@@ -375,5 +367,3 @@ public class AddLocation extends AppCompatActivity
         }
     }
 }
-=======
->>>>>>> 52dfb8435866588cf7929ab81f8b4a85d4939c27

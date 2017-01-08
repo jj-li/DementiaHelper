@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_maps"
     android:layout_width="match_parent"
@@ -10,4 +11,78 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.jj.dementiahelper.MapsActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationName"
+        android:text="Name: "
+        android:textSize="20sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationZip"
+        android:text="Zip: "
+        android:textSize="20sp"
+        android:layout_alignBaseline="@+id/locationState"
+        android:layout_alignBottom="@+id/locationState"
+        android:layout_toLeftOf="@+id/backButton"
+        android:layout_toStartOf="@+id/backButton" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/oval"
+        android:src="@drawable/go_back"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationState"
+        android:text="State: "
+        android:textSize="20sp"
+        android:layout_below="@+id/locationCity"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="13dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationCity"
+        android:text="City: "
+        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:layout_below="@+id/locationAddress"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="250sp"
+        tools:context="com.example.jj.dementiahelper.MapsActivity"
+        android:layout_marginBottom="15dp"
+        android:layout_above="@+id/backButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/locationAddress"
+        android:text="Address: "
+        android:textSize="20sp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/locationName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

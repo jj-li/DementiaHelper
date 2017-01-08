@@ -1,7 +1,9 @@
 package com.example.jj.dementiahelper;
 
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
@@ -10,9 +12,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -23,6 +29,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -32,6 +42,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
     public static final String TAG = MapsActivity.class.getSimpleName();
+    private String name = "";
+    private double latitude;
+    private double longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +54,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Extract data
+        Bundle bundle = getIntent().getExtras();
+        String[] data = bundle.getString("data").split(",");
+        name = data[0];
+        latitude = Double.parseDouble(data[1]);
+        longitude = Double.parseDouble(data[2]);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -52,6 +72,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)
                 .setFastestInterval(1 * 1000);
+
+        ImageButton backButton = (ImageButton) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(new Intent(getApplicationContext(),Locations.class));
+            }
+        });
+
+        TextView nameField = (TextView) findViewById(R.id.locationName);
+        nameField.setText("Name: " + name);
+
+        Geocoder geocoder;
+        List<android.location.Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            String city = addresses.get(0).getLocality();
+            String state = addresses.get(0).getAdminArea();
+            String country = addresses.get(0).getCountryName();
+            String postalCode = addresses.get(0).getPostalCode();
+            String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+            TextView addressField = (TextView) findViewById(R.id.locationAddress);
+            addressField.setText("Address: " + address);
+            TextView cityField = (TextView) findViewById(R.id.locationCity);
+            cityField.setText("City: " + city);
+            TextView stateField = (TextView) findViewById(R.id.locationState);
+            stateField.setText("State: " + state);
+            TextView zipField = (TextView) findViewById(R.id.locationZip);
+            zipField.setText("Zip: " + postalCode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
@@ -60,7 +118,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mMap == null) {
             //TO DO
         }
+        //Extract data
+        Bundle bundle = getIntent().getExtras();
+        String[] data = bundle.getString("data").split(",");
+        name = data[0];
+        latitude = Double.parseDouble(data[1]);
+        longitude = Double.parseDouble(data[2]);
         mGoogleApiClient.connect();
+
     }
 
     @Override

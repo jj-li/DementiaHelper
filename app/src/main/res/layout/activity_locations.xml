@@ -8,11 +8,10 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:id="@+id/scrollPane"
-        android:layout_height="400sp"
-        android:layout_alignParentTop="true"
+        android:layout_height="410sp"
+        android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/addLocation">
+        android:layout_alignParentStart="true">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -22,16 +21,28 @@
 
     </ScrollView>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="List of Locations"
+        android:textSize="20sp"
+        android:id="@+id/textView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="23dp"
+        android:layout_marginStart="23dp" />
+
     <ImageButton
         android:id="@+id/addLocation"
         android:layout_width="75sp"
         android:layout_height="75sp"
         android:background="@drawable/oval"
         android:src="@drawable/add_new_location"
-        android:layout_marginRight="11dp"
-        android:layout_marginEnd="11dp"
-        android:layout_marginBottom="11dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="11dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="16dp" />
 </RelativeLayout>

@@ -48,7 +48,7 @@ public class Locations extends AppCompatActivity {
         else {
             String[] info = res.split("\n");
 
-            for (String s : info) {
+            for (final String s : info) {
                 if (s.equals("")) {
                     continue;
                 }
@@ -58,8 +58,16 @@ public class Locations extends AppCompatActivity {
                 rowButton.setText(locationInfo[0]);
                 rowButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
+                        Intent nextPage = new Intent(getApplicationContext(),MapsActivity.class);
+
                         //Pass locationInfo over
-                        //Go to new activity page
+                        Bundle bundle = new Bundle();
+                        bundle.putString("data", s);
+                        nextPage.putExtras(bundle);
+
+                        //Go to the Maps Page
+                        finish();
+                        startActivity(nextPage);
                     }
                 });
 
