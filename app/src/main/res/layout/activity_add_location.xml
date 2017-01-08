@@ -21,16 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <Button
-        android:id="@+id/myLocation"
-        android:layout_width="331dp"
-        android:layout_height="38dp"
-        android:background="@drawable/rectangle"
-        android:text="Use My Current Location"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="center_vertical|center_horizontal"
-        android:layout_gravity="top|center_horizontal" />
-
     <ImageButton
         android:id="@+id/addButton"
         android:layout_width="75sp"
@@ -40,6 +30,16 @@
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|right"
         android:layout_gravity="top|left" />
+
+    <Button
+        android:id="@+id/myLocation"
+        android:layout_width="285dp"
+        android:layout_height="38dp"
+        android:background="@drawable/rectangle"
+        android:text="Use My Current Location"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="center_vertical|center_horizontal"
+        android:layout_gravity="bottom|center_horizontal" />
 
     <include layout="@layout/content_add_location"
         android:id="@+id/include"
