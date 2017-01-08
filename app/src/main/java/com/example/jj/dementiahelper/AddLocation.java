@@ -1,9 +1,20 @@
 package com.example.jj.dementiahelper;
 
+<<<<<<< HEAD
 import android.content.Context;
+=======
+import android.*;
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+>>>>>>> de3ed7ab80ab30a6f229a03ef077c167a0d91897
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.renderscript.Double2;
@@ -12,6 +23,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -32,6 +44,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+<<<<<<< HEAD
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,11 +56,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class AddLocation extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+=======
+import java.io.IOException;
+import java.util.List;
+
+public class AddLocation extends AppCompatActivity
+        implements GoogleApiClient.ConnectionCallbacks,
+>>>>>>> de3ed7ab80ab30a6f229a03ef077c167a0d91897
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
+    private LocationManager locationManager;
     public static final String TAG = MapsActivity.class.getSimpleName();
     double currentLatitude;
     double currentLongitude;
@@ -66,6 +87,7 @@ public class AddLocation extends AppCompatActivity implements GoogleApiClient.Co
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+<<<<<<< HEAD
                 EditText addr = (EditText) findViewById(R.id.addressField);
                 addr.setText(Double.toString(currentLatitude) + " " + Double.toString(currentLongitude));
 
@@ -125,12 +147,22 @@ public class AddLocation extends AppCompatActivity implements GoogleApiClient.Co
                     e.printStackTrace();
                 }
                 return data;
+=======
+                createsLatLong();
+                startActivity(new Intent(AddLocation.this, MainActivity.class));
+>>>>>>> de3ed7ab80ab30a6f229a03ef077c167a0d91897
             }
         });
 
         Button myLocation = (Button) findViewById(R.id.myLocation);
         myLocation.setOnClickListener(new View.OnClickListener() {
+<<<<<<< HEAD
+=======
+            @Override
+>>>>>>> de3ed7ab80ab30a6f229a03ef077c167a0d91897
             public void onClick(View view) {
+                EditText addr = (EditText) findViewById(R.id.addressField);
+                addr.setText(Double.toString(currentLatitude) + " " + Double.toString(currentLongitude));
             }
         });
 
@@ -139,6 +171,12 @@ public class AddLocation extends AppCompatActivity implements GoogleApiClient.Co
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+<<<<<<< HEAD
+=======
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    }
+>>>>>>> de3ed7ab80ab30a6f229a03ef077c167a0d91897
 
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -170,6 +208,7 @@ public class AddLocation extends AppCompatActivity implements GoogleApiClient.Co
             // as you specify a parent activity in AndroidManifest.xml.
             int id = item.getItemId();
 
+<<<<<<< HEAD
             //noinspection SimplifiableIfStatement
             if (id == R.id.action_settings) {
                 return true;
@@ -190,6 +229,29 @@ public class AddLocation extends AppCompatActivity implements GoogleApiClient.Co
                 currentLatitude = location.getLatitude();
                 currentLongitude = location.getLongitude();
             }
+=======
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        int finePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int coarsePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        int permGranted = PackageManager.PERMISSION_GRANTED;
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return  ;
+        }
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10 * 1000)
+                .setFastestInterval(1 * 1000);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (location == null) {
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (LocationListener) this);
+        } else {
+            currentLatitude = location.getLatitude();
+            currentLongitude = location.getLongitude();
+>>>>>>> de3ed7ab80ab30a6f229a03ef077c167a0d91897
         }
 
 
@@ -220,3 +282,41 @@ public class AddLocation extends AppCompatActivity implements GoogleApiClient.Co
             currentLongitude = location.getLongitude();
         }
     }
+<<<<<<< HEAD
+=======
+
+    public void createsLatLong () {
+        Geocoder coder = new Geocoder(this);
+        List<Address> address = null;
+        StringBuilder strAddr = new StringBuilder();
+        //add addr
+        strAddr.append((((EditText) findViewById(R.id.addressField)).getText().toString().trim())).append(" ");
+        //add city
+        strAddr.append((((EditText) findViewById(R.id.cityField)).getText().toString().trim())).append(" ");
+        //add state
+        strAddr.append((((EditText) findViewById(R.id.stateField)).getText().toString().trim())).append(" ");
+        //add zipcode
+        strAddr.append((((EditText) findViewById(R.id.zipField)).getText().toString().trim())).append(" ");
+
+        try {
+            address = coder.getFromLocationName(strAddr.toString(), 5);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (address == null) {
+            return;
+        }
+        Address location = address.get(0);
+
+        Double latitude = location.getLatitude();
+        Double longitude = location.getLongitude();
+        String latLongString = Double.toString(latitude) + " ";
+        latLongString += Double.toString(longitude);
+
+        if (currentLatitude != latitude || currentLongitude != longitude) {
+            currentLatitude = latitude;
+            currentLongitude = longitude;
+        }
+    }
+}
+>>>>>>> de3ed7ab80ab30a6f229a03ef077c167a0d91897
