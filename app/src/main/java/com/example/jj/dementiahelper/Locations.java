@@ -22,13 +22,13 @@ public class Locations extends AppCompatActivity {
 
             // set some properties of rowTextView or something
 
-            rowButton.setText("This is row #" + i);
+            //rowButton.setText("This is row #" + i);
 
             // add the textview to the linearlayout
-            myList.addView(rowTextView);
+            //myList.addView(rowTextView);
 
             // save a reference to the textview for later
-            myTextViews[i] = rowTextView;
+            //myTextViews[i] = rowTextView;
         }
     }
 

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,7 +35,13 @@ import com.google.android.gms.location.LocationServices;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.INTERNET;
 
 public class AddLocation extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
@@ -48,6 +55,7 @@ public class AddLocation extends AppCompatActivity
     double currentLatitude;
     double currentLongitude;
     public String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DementiaHelperDocuments";
+    private static final int REQUEST_PERMISSIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +143,14 @@ public class AddLocation extends AppCompatActivity
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
+
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.connect();
+        }
+//        mLocationRequest = LocationRequest.create()
+//                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+//                .setInterval(10000)
+//                .setFastestInterval(5000);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
@@ -171,22 +187,22 @@ public class AddLocation extends AppCompatActivity
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        int finePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
-        int coarsePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        int permGranted = PackageManager.PERMISSION_GRANTED;
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //checkAndRequestPermissions();
             return;
         }
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10000)
-                .setFastestInterval(1000);
+                .setFastestInterval(5000);
+
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (LocationListener) this);
+            location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            currentLatitude = location.getLatitude();
+            currentLongitude = location.getLongitude();
         } else {
             currentLatitude = location.getLatitude();
             currentLongitude = location.getLongitude();
@@ -253,6 +269,38 @@ public class AddLocation extends AppCompatActivity
         if (currentLatitude != latitude || currentLongitude != longitude) {
             currentLatitude = latitude;
             currentLongitude = longitude;
+        }
+    }
+
+    private void checkAndRequestPermissions() {
+        int coarsePermission = ContextCompat.checkSelfPermission(this,ACCESS_COARSE_LOCATION);
+        int finePermission = ContextCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
+        if (coarsePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(ACCESS_COARSE_LOCATION);
+        }
+        if (finePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(ACCESS_FINE_LOCATION);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                    REQUEST_PERMISSIONS);
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                } else {
+                    Button myLocation = (Button) findViewById(R.id.myLocation);
+                    myLocation.setClickable(false);
+                }
+                return;
+            }
         }
     }
 }
