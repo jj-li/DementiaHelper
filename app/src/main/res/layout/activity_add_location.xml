@@ -23,8 +23,8 @@
 
     <ImageButton
         android:id="@+id/addButton"
-        android:layout_width="75sp"
-        android:layout_height="75sp"
+        android:layout_width="70sp"
+        android:layout_height="70sp"
         android:background="@drawable/oval"
         android:src="@drawable/add_new_location"
         app:layout_anchor="@+id/include"
@@ -44,5 +44,15 @@
     <include layout="@layout/content_add_location"
         android:id="@+id/include"
         android:layout_width="wrap_content" />
+
+    <ImageButton
+        android:id="@+id/cancelButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/oval"
+        android:src="@drawable/go_back"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="bottom|left"
+        android:layout_gravity="top|right" />
 
 </android.support.design.widget.CoordinatorLayout>

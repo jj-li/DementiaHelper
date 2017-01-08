@@ -1,6 +1,7 @@
 package com.example.jj.dementiahelper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -62,7 +63,9 @@ public class AddLocation extends AppCompatActivity
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createsLatLong();
+                if (!createsLatLong()) {
+                    return;
+                }
 
                 //File file = new File (path + "/savedFile.txt");
                 String[] data = {"Hard Coded Data", "TWO"};
@@ -83,6 +86,8 @@ public class AddLocation extends AppCompatActivity
                 }
                 else
                     addr.setText(res);*/
+                finish();
+                startActivity(new Intent(getApplicationContext(),Locations.class));
             }
 
             public void saveFile(String file, String[] data) {
@@ -127,6 +132,15 @@ public class AddLocation extends AppCompatActivity
             public void onClick(View view) {
                 EditText addr = (EditText) findViewById(R.id.addressField);
                 addr.setText(Double.toString(currentLatitude) + " " + Double.toString(currentLongitude));
+            }
+        });
+
+        ImageButton backButton = (ImageButton) findViewById(R.id.cancelButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(new Intent(getApplicationContext(),Locations.class));
             }
         });
 
@@ -221,7 +235,7 @@ public class AddLocation extends AppCompatActivity
         currentLongitude = location.getLongitude();
     }
 
-    public void createsLatLong() {
+    public boolean createsLatLong() {
         Geocoder coder = new Geocoder(this);
         List<Address> address = null;
         StringBuilder strAddr = new StringBuilder();
@@ -240,19 +254,24 @@ public class AddLocation extends AppCompatActivity
             e.printStackTrace();
         }
         if (address == null) {
-            return;
+            return false;
         }
-        Address location = address.get(0);
+        if (address.size() == 0) {
+            return false;
+        }
+            Address location = address.get(0);
 
-        Double latitude = location.getLatitude();
-        Double longitude = location.getLongitude();
+            Double latitude = location.getLatitude();
+            Double longitude = location.getLongitude();
 //        String latLongString = Double.toString(latitude) + " ";
 //        latLongString += Double.toString(longitude);
 //        ((EditText) findViewById(R.id.zipField)).setText(latLongString);
 
-        if (currentLatitude != latitude || currentLongitude != longitude) {
-            currentLatitude = latitude;
-            currentLongitude = longitude;
+            if (currentLatitude != latitude || currentLongitude != longitude) {
+                currentLatitude = latitude;
+                currentLongitude = longitude;
+            }
+            return true;
         }
+
     }
-}
