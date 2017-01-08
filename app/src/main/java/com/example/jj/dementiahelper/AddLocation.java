@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -47,6 +48,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.INTERNET;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Locale;
 
 public class AddLocation extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
@@ -183,8 +185,7 @@ public class AddLocation extends AppCompatActivity
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText addr = (EditText) findViewById(R.id.addressField);
-                addr.setText(Double.toString(currentLatitude) + " " + Double.toString(currentLongitude));
+                createAddressName();
             }
         });
 
@@ -294,6 +295,28 @@ public class AddLocation extends AppCompatActivity
     public void onLocationChanged(Location location) {
         currentLatitude = location.getLatitude();
         currentLongitude = location.getLongitude();
+    }
+
+    private void createAddressName() {
+        Geocoder geocoder;
+        List<android.location.Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        try {
+            addresses = geocoder.getFromLocation(currentLatitude, currentLongitude, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+            String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+            String city = addresses.get(0).getLocality();
+            String state = addresses.get(0).getAdminArea();
+            String country = addresses.get(0).getCountryName();
+            String postalCode = addresses.get(0).getPostalCode();
+            String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+            ((EditText) findViewById(R.id.addressField)).setText(address);
+            ((EditText) findViewById(R.id.cityField)).setText(city);
+            ((EditText) findViewById(R.id.stateField)).setText(state);
+            ((EditText) findViewById(R.id.zipField)).setText(postalCode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean createsLatLong() {

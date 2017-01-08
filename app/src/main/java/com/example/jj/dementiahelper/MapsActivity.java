@@ -68,6 +68,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng src;
     private LatLng dest;
     private Location location;
+    MarkerOptions srcOptions;
+    MarkerOptions destOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,18 +173,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Add a marker to dest and move the camera
-        mMap.addMarker(new MarkerOptions().position(dest).title(name));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dest, 12));
+        if (location != null) {
+            src = new LatLng(location.getLatitude(),location.getLatitude());
+        } else {
+            src = new LatLng(40.744709, -73.984848);
+        }
+        srcOptions = new MarkerOptions();
+        srcOptions.position(src).title("You are here");
+        srcOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        mMap.addMarker(srcOptions);
+        destOptions = new MarkerOptions();
+        destOptions .position(dest).title(name);
+        destOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        mMap.addMarker(destOptions);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(src, 12));
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             checkAndRequestPermissions();
         }
         mMap.setMyLocationEnabled(true);
 
-        if (location != null){
-            Log.d("src","Source not found");
-            //Add marker to src
-            src = new LatLng(location.getLatitude(),location.getLongitude());
-            mMap.addMarker(new MarkerOptions().position(src).title("You are here"));
+        if (src != null && dest != null) {
+            // Getting URL to the Google Directions API
+            String url = getUrl(src, dest);
+            Log.d("onMapClick", url.toString());
+            FetchUrl FetchUrl = new FetchUrl();
+
+            // Start downloading json data from Google Directions API
+            FetchUrl.execute(url);
+            //move map camera
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(src));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
         }
     }
 
@@ -207,8 +227,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
         src = new LatLng(currentLatitude, currentLongitude);
-        MarkerOptions options = new MarkerOptions().position(src).title("I am here!");
-        mMap.addMarker(options);
+        srcOptions.position(src);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(src));
     }
 
@@ -269,6 +288,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    // Credits to https://www.codeproject.com/Articles/1113585/Google-Maps-Draw-Route-between-two-points-using-Go for code
     private String getUrl(LatLng origin, LatLng dest) {
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
@@ -314,6 +334,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // Fetches data from url passed
+    /**
+     * Credits to https://www.codeproject.com/Articles/1113585/Google-Maps-Draw-Route-between-two-points-using-Go for code
+     */
     private class FetchUrl extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... url) {
@@ -340,6 +363,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     /**
      * A class to parse the Google Places in JSON format
+     * Credits to https://www.codeproject.com/Articles/1113585/Google-Maps-Draw-Route-between-two-points-using-Go for code
      */
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
         // Parsing the data in non-ui thread
