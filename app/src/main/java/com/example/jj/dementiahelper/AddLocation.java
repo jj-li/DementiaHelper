@@ -1,6 +1,7 @@
 package com.example.jj.dementiahelper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -32,9 +33,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +46,12 @@ import java.util.List;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.INTERNET;
+=======
+import java.io.InputStreamReader;
+import java.util.List;
+
+import static android.R.attr.lines;
+>>>>>>> 52dfb8435866588cf7929ab81f8b4a85d4939c27
 
 public class AddLocation extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
@@ -70,19 +80,28 @@ public class AddLocation extends AppCompatActivity
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                createsLatLong();
+                if (!createsLatLong()) {
+                    Toast.makeText(getApplicationContext(), "Invalid Address. Please Try Again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 //File file = new File (path + "/savedFile.txt");
-                String[] data = {"Hard Coded Data", "TWO"};
                 String res = loadFile("savedFile.txt");
+                String[] data;
+                EditText name = (EditText) findViewById(R.id.nameField);
+                String currentLocation = name.getText() + "," + currentLatitude + "," + currentLongitude;
+                Log.d("Loaded: ", res);
                 if (!res.equals("")) {
                     String[] prev = res.split("\n");
-                    data = new String[prev.length + 1];
+                    data = new String[prev.length+1];
                     for (int i = 0; i < prev.length; i++) {
                         data[i] = prev[i];
                     }
-                    //data[prev.length] = currentLatitude + "," + currentLongitude;
-                    data[prev.length] = "Hard Coded Data";
+                    data[prev.length] = currentLocation;
+                }
+                else {
+                    data = new String[1];
+                    data[0] = currentLocation;
                 }
                 saveFile("savedFile.txt", data);
                 /*res = loadFile("savedFile.txt");
@@ -91,15 +110,19 @@ public class AddLocation extends AppCompatActivity
                 }
                 else
                     addr.setText(res);*/
+                finish();
+                startActivity(new Intent(getApplicationContext(),Locations.class));
             }
 
             public void saveFile(String file, String[] data) {
-                FileOutputStream outputStream;
+                /*FileOutputStream outputStream;
                 try {
                     outputStream = openFileOutput(file, Context.MODE_PRIVATE);
                     for (int i = 0; i < data.length; i++) {
+                        //Log.d("Writing: ", data[i]);
                         outputStream.write(data[i].getBytes());
                         if (i < data.length - 1) {
+                            //Log.d("Writing: ", "New line");
                             outputStream.write("\n".getBytes());
                         }
                     }
@@ -107,11 +130,25 @@ public class AddLocation extends AppCompatActivity
                     Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     e.printStackTrace();
+                }*/
+                Context context = getApplicationContext();
+                try {
+                    FileOutputStream fos = context.openFileOutput(file, Context.MODE_PRIVATE);
+                    for (String line : data) {
+                        // add terminal character so that it doesn't get written as one line
+                        fos.write((line + "\n").getBytes());
+                    }
+                    fos.close();
+                    Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
+                } catch (FileNotFoundException fnfe) {
+                    fnfe.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
 
             public String loadFile(String file) {
-                String data = "";
+                /*String data = "";
                 FileInputStream inputStream;
                 try {
                     inputStream = openFileInput(file);
@@ -121,8 +158,26 @@ public class AddLocation extends AppCompatActivity
                     inputStream.read(bytes);
                     data = new String(bytes);
                     inputStream.close();
-                    Toast.makeText(getApplicationContext(), "Loaded", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return data;*/
+                Context context = getApplicationContext();
+                String data = "";
+                try {
+                    FileInputStream fin = context.openFileInput(file);
+                    if (fin != null) {
+                        InputStreamReader inputStreamReader = new InputStreamReader(fin);
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        String line;
+                        while (( line = bufferedReader.readLine() ) != null) {
+                            data += line + "\n";
+                        }
+                        fin.close();
+                    }
+                } catch (FileNotFoundException fnfe) {
+                    fnfe.printStackTrace();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
                 return data;
@@ -135,6 +190,15 @@ public class AddLocation extends AppCompatActivity
             public void onClick(View view) {
                 EditText addr = (EditText) findViewById(R.id.addressField);
                 addr.setText(Double.toString(currentLatitude) + " " + Double.toString(currentLongitude));
+            }
+        });
+
+        ImageButton backButton = (ImageButton) findViewById(R.id.cancelButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                startActivity(new Intent(getApplicationContext(),Locations.class));
             }
         });
 
@@ -237,7 +301,7 @@ public class AddLocation extends AppCompatActivity
         currentLongitude = location.getLongitude();
     }
 
-    public void createsLatLong() {
+    public boolean createsLatLong() {
         Geocoder coder = new Geocoder(this);
         List<Address> address = null;
         StringBuilder strAddr = new StringBuilder();
@@ -256,21 +320,28 @@ public class AddLocation extends AppCompatActivity
             e.printStackTrace();
         }
         if (address == null) {
-            return;
+            return false;
         }
-        Address location = address.get(0);
+        if (address.size() == 0) {
+            return false;
+        }
+            Address location = address.get(0);
 
-        Double latitude = location.getLatitude();
-        Double longitude = location.getLongitude();
+            Double latitude = location.getLatitude();
+            Double longitude = location.getLongitude();
 //        String latLongString = Double.toString(latitude) + " ";
 //        latLongString += Double.toString(longitude);
 //        ((EditText) findViewById(R.id.zipField)).setText(latLongString);
 
-        if (currentLatitude != latitude || currentLongitude != longitude) {
-            currentLatitude = latitude;
-            currentLongitude = longitude;
+            if (currentLatitude != latitude || currentLongitude != longitude) {
+                currentLatitude = latitude;
+                currentLongitude = longitude;
+            }
+            return true;
         }
+
     }
+<<<<<<< HEAD
 
     private void checkAndRequestPermissions() {
         int coarsePermission = ContextCompat.checkSelfPermission(this,ACCESS_COARSE_LOCATION);
@@ -304,3 +375,5 @@ public class AddLocation extends AppCompatActivity
         }
     }
 }
+=======
+>>>>>>> 52dfb8435866588cf7929ab81f8b4a85d4939c27
