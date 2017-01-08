@@ -35,15 +35,6 @@ public class Locations extends AppCompatActivity {
             rowText.setText("No Locations. \nClick the plus button to add a location.");
             rowText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 100);
 
-<<<<<<< HEAD
-            //rowButton.setText("This is row #" + i);
-
-            // add the textview to the linearlayout
-            //myList.addView(rowTextView);
-
-            // save a reference to the textview for later
-            //myTextViews[i] = rowTextView;
-=======
             DisplayMetrics displaymetrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
             int width = displaymetrics.widthPixels;
@@ -85,7 +76,6 @@ public class Locations extends AppCompatActivity {
                 //save reference to the button
                 buttons.add(rowButton);
             }
->>>>>>> 52dfb8435866588cf7929ab81f8b4a85d4939c27
         }
 
         ImageButton addNewLocation = (ImageButton) findViewById(R.id.addLocation);
