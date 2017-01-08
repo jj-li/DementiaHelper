@@ -4,6 +4,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.renderscript.Double2;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -49,11 +50,12 @@ public class AddLocation extends AppCompatActivity implements GoogleApiClient.Co
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                EditText addr = (EditText) findViewById(R.id.addressField);
+                addr.setText(Double.toString(currentLatitude) + " " + Double.toString(currentLongitude));
             }
         });
 
-        Button getLocation = (Button) findViewById(R.id.myLocation);
+        Button getLocation = (Button) c
         getLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
